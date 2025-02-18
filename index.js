@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const dbConnect = require("./dataBase/dbConnect");
 const userImgRouter = require("./modules/userImg/userImg.route");
+const allCarsRouter = require("./modules/allCars/allCars.route");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 8000;
@@ -19,6 +20,7 @@ dbConnect();
 
 // routes
 app.use("/caravan", userImgRouter);
+app.use("/caravan/cars", allCarsRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
