@@ -1,4 +1,5 @@
 const express = require("express");
+const verifyToken = require("../../middlewares/verifyToken");
 const router = express.Router();
 const {
   getAllCarBookingsController,
@@ -8,8 +9,8 @@ const {
 } = require("./carBooking.controller");
 
 router.get("/all-bookings", getAllCarBookingsController);
-router.get("/user-bookings", getAUserCarBookingsController);
-router.post("/add-bookings", addCarBookingsController);
-router.delete("/:bookedId", deleteACarBookingController);
+router.get("/user-bookings",verifyToken, getAUserCarBookingsController);
+router.post("/add-bookings", verifyToken, addCarBookingsController);
+router.delete("/:bookedId",verifyToken, deleteACarBookingController);
 
 module.exports = router;

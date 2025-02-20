@@ -6,7 +6,7 @@ const {
   getSingleCarDataFromDB,
   getAllCarsByAUserDataFromDB,
   addACarToDB,
-  deleteACarFromDB
+  deleteACarFromDB,
 } = require("./allCars.service");
 
 // get all the car data-------------
@@ -14,11 +14,13 @@ const getAllCarsController = async (req, res) => {
   const { perPageData, pageNo } = req.query;
   // console.log(req.query,Number(pageNo),Number(perPageData));
   try {
-    const {allCars,totalNoOfCars} = await getAllCarsDataFromDB(
+    const { allCars, totalNoOfCars } = await getAllCarsDataFromDB(
       Number(pageNo),
       Number(perPageData)
     );
-    return res.status(200).json({ status: "success", data: {allCars,totalNoOfCars} });
+    return res
+      .status(200)
+      .json({ status: "success", data: { allCars, totalNoOfCars } });
   } catch (error) {
     return res.status(500).json({ status: "success", error });
   }
@@ -28,18 +30,20 @@ const getAllAvailableCarsController = async (req, res) => {
   const { perPageData, pageNo } = req.query;
   // console.log(req.query,Number(pageNo),Number(perPageData));
   try {
-    const {allCars,totalNoOfCars} = await getAvailableCarsDataFromDB(
+    const { allCars, totalNoOfCars } = await getAvailableCarsDataFromDB(
       Number(pageNo),
       Number(perPageData)
     );
-    return res.status(200).json({ status: "success", data: {allCars,totalNoOfCars} });
+    return res
+      .status(200)
+      .json({ status: "success", data: { allCars, totalNoOfCars } });
   } catch (error) {
     return res.status(500).json({ status: "success", error });
   }
 };
 // get a single car data-------------
 const getSingleCarController = async (req, res) => {
-  const { carId} = req.params;
+  const { carId } = req.params;
   try {
     const data = await getSingleCarDataFromDB(carId);
     return res.status(200).json({ status: "success", data });
@@ -51,10 +55,22 @@ const getSingleCarController = async (req, res) => {
 const getAllCarsByAUserController = async (req, res) => {
   const { userEmail } = req.query;
   // console.log(req.query);
+  // first verify the token data---
+  if (userEmail !== req?.user?.userEmail) {
+    return res
+      .status(403)
+      .json({ status: "success", data: null, message: "Forbidden access" });
+  }
   try {
-    const { allCarsByUser, totalNoOfCars }= await getAllCarsByAUserDataFromDB(userEmail);
+    const { allCarsByUser, totalNoOfCars } = await getAllCarsByAUserDataFromDB(
+      userEmail
+    );
     // console.log(allCarsByUser)
-    return res.status(200).json({ status: "success", data: { allCarsByUser, totalNoOfCars } });
+    return res.status(200).json({
+      status: "success",
+      data: { allCarsByUser, totalNoOfCars },
+      message: "User cars access successful",
+    });
   } catch (error) {
     return res.status(500).json({ status: "success", error });
   }
@@ -73,22 +89,42 @@ const getTopCarsController = async (req, res) => {
 // add a car in the database-----------
 const addACarController = async (req, res) => {
   const carData = req.body;
+  // console.log(carData)
+  // first verify the token data---
+  if (carData?.addedBy?.email !== req?.user?.userEmail) {
+    return res
+      .status(403)
+      .json({ status: "error", data: null, message: "Forbidden access" });
+  }
   try {
-    const carDataAdding= await addACarToDB(carData);
-    console.log(carDataAdding)
-    return res.status(200).json({ status: "success", data:carDataAdding });
+    const carDataAdding = await addACarToDB(carData);
+    // console.log(carDataAdding);
+    return res.status(201).json({ status: "success", data: carDataAdding ,message: "car added successfully"});
   } catch (error) {
     return res.status(500).json({ status: "error", data: error.message });
   }
 };
 // delete a car from the database-----------
 const deleteACarController = async (req, res) => {
-  const {carId} = req.params;
-  const {userEmail}= req.body;
+  const { carId } = req.params;
+  const { userEmail } = req.body;
+  // first verify the token data---
+  if (userEmail !== req?.user?.userEmail) {
+    return res
+      .status(403)
+      .json({ status: "success", data: null, message: "Forbidden access" });
+  }
   try {
-    const { deletedData, carDataAfterDelete }= await deleteACarFromDB(carId,userEmail);
+    const { deletedData, carDataAfterDelete } = await deleteACarFromDB(
+      carId,
+      userEmail
+    );
     // console.log(carDataAdding)
-    return res.status(200).json({ status: "success", data:{ deletedData, carDataAfterDelete } });
+    return res.status(200).json({
+      status: "success",
+      data: { deletedData, carDataAfterDelete },
+      message: "car deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ status: "error", data: error.message });
   }
@@ -101,5 +137,5 @@ module.exports = {
   getTopCarsController,
   addACarController,
   getAllCarsByAUserController,
-  deleteACarController
+  deleteACarController,
 };

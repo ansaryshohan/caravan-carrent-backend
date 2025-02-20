@@ -71,7 +71,7 @@ const getAllCarsByAUserDataFromDB = async (userEmail) => {
 const addACarToDB = async (carData) => {
   try {
     const dataAdding = new AllCarsModel(carData);
-    console.log(dataAdding);
+    // console.log(dataAdding);
     await dataAdding.save();
     return dataAdding;
   } catch (error) {

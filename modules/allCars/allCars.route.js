@@ -1,4 +1,5 @@
 const express = require("express");
+const verifyToken = require("../../middlewares/verifyToken")
 const router = express.Router();
 const {
   addACarController,
@@ -10,12 +11,15 @@ const {
   deleteACarController
 } = require("./allCars.controller");
 
+// TODO:: only for admin route
 router.get("/all-cars", getAllCarsController);
+// logged IN users only routes
+router.get("/user-cars",verifyToken, getAllCarsByAUserController);
+router.post("/add-car", verifyToken,addACarController);
+router.delete("/:carId",verifyToken,deleteACarController);
+// public routes
 router.get("/available-cars", getAllAvailableCarsController);
-router.get("/user-cars", getAllCarsByAUserController);
 router.get("/top-cars", getTopCarsController);
 router.get("/:carId", getSingleCarController);
-router.post("/add-car",addACarController);
-router.delete("/:carId",deleteACarController);
 
 module.exports = router;
