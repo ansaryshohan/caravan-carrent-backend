@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   addACarController,
   getAllCarsController,
+  getAllAvailableCarsController,
   getSingleCarController,
   getAllCarsByAUserController,
   getTopCarsController,
@@ -10,6 +11,7 @@ const {
 } = require("./allCars.controller");
 
 router.get("/all-cars", getAllCarsController);
+router.get("/available-cars", getAllAvailableCarsController);
 router.get("/user-cars", getAllCarsByAUserController);
 router.get("/top-cars", getTopCarsController);
 router.get("/:carId", getSingleCarController);

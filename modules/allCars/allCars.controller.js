@@ -2,6 +2,7 @@ const AllCarsModel = require("./allCars.model");
 const {
   getTopCarDataFromDB,
   getAllCarsDataFromDB,
+  getAvailableCarsDataFromDB,
   getSingleCarDataFromDB,
   getAllCarsByAUserDataFromDB,
   addACarToDB,
@@ -14,6 +15,20 @@ const getAllCarsController = async (req, res) => {
   // console.log(req.query,Number(pageNo),Number(perPageData));
   try {
     const {allCars,totalNoOfCars} = await getAllCarsDataFromDB(
+      Number(pageNo),
+      Number(perPageData)
+    );
+    return res.status(200).json({ status: "success", data: {allCars,totalNoOfCars} });
+  } catch (error) {
+    return res.status(500).json({ status: "success", error });
+  }
+};
+// get all available cars data-------------
+const getAllAvailableCarsController = async (req, res) => {
+  const { perPageData, pageNo } = req.query;
+  // console.log(req.query,Number(pageNo),Number(perPageData));
+  try {
+    const {allCars,totalNoOfCars} = await getAvailableCarsDataFromDB(
       Number(pageNo),
       Number(perPageData)
     );
@@ -81,6 +96,7 @@ const deleteACarController = async (req, res) => {
 
 module.exports = {
   getAllCarsController,
+  getAllAvailableCarsController,
   getSingleCarController,
   getTopCarsController,
   addACarController,

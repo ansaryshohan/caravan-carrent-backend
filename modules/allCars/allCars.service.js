@@ -18,7 +18,22 @@ const getAllCarsDataFromDB = async (pageNo = 0, perPageData = 0) => {
       .skip(pageNo * perPageData)
       .limit(perPageData);
     // console.log(allCars);
+    const totalNoOfCars = await AllCarsModel.countDocuments();
+    // console.log(totalNoOfCars);
+    return { allCars, totalNoOfCars };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+// get all the cars
+const getAvailableCarsDataFromDB = async (pageNo = 0, perPageData = 0) => {
+  try {
+    const allCars = await AllCarsModel.find({availability:true,adminApproval:"approved" })
+      .skip(pageNo * perPageData)
+      .limit(perPageData);
+    // console.log(allCars);
     const totalNoOfCars = await AllCarsModel.countDocuments({
+      availability:true,
       adminApproval: "approved",
     });
     // console.log(totalNoOfCars);
@@ -85,6 +100,7 @@ const deleteACarFromDB = async (carId, userEmail) => {
 module.exports = {
   getAllCarsDataFromDB,
   getSingleCarDataFromDB,
+  getAvailableCarsDataFromDB,
   getTopCarDataFromDB,
   addACarToDB,
   getAllCarsByAUserDataFromDB,
