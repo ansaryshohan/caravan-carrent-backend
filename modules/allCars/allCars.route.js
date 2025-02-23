@@ -8,6 +8,8 @@ const {
   getSingleCarController,
   getAllCarsByAUserController,
   getTopCarsController,
+  getAllCarsTypesController,
+  getAllCarModelAccordingSearchController,
   deleteACarController
 } = require("./allCars.controller");
 
@@ -19,6 +21,8 @@ router.post("/add-car", verifyToken,addACarController);
 router.delete("/:carId",verifyToken,deleteACarController);
 // public routes
 router.get("/available-cars", getAllAvailableCarsController);
+router.get("/car-types", getAllCarsTypesController);
+router.get("/search-cars", getAllCarModelAccordingSearchController);
 router.get("/top-cars", getTopCarsController);
 router.get("/:carId", getSingleCarController);
 

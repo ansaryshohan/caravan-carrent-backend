@@ -5,6 +5,8 @@ const {
   getAvailableCarsDataFromDB,
   getSingleCarDataFromDB,
   getAllCarsByAUserDataFromDB,
+  getAllCarTypesFromDB,
+  getAllCarModelAccordingSearchFromDB,
   addACarToDB,
   deleteACarFromDB,
 } = require("./allCars.service");
@@ -27,18 +29,44 @@ const getAllCarsController = async (req, res) => {
 };
 // get all available cars data-------------
 const getAllAvailableCarsController = async (req, res) => {
-  const { perPageData, pageNo } = req.query;
-  // console.log(req.query,Number(pageNo),Number(perPageData));
+  const { perPageData, pageNo,priceSort,carType,searchText } = req.query;
+  // console.log(req.query);
   try {
     const { allCars, totalNoOfCars } = await getAvailableCarsDataFromDB(
       Number(pageNo),
-      Number(perPageData)
+      Number(perPageData),
+      priceSort,
+      carType,
+      searchText
     );
     return res
       .status(200)
       .json({ status: "success", data: { allCars, totalNoOfCars } });
   } catch (error) {
-    return res.status(500).json({ status: "success", error });
+    return res.status(500).json({ status: "error", error });
+  }
+};
+// get all available cars Types data-------------
+const getAllCarsTypesController = async (req, res) => {
+  try {
+    const carTypesData = await getAllCarTypesFromDB();
+    return res
+      .status(200)
+      .json({ status: "success", data: carTypesData, message:"car types got successfully"});
+  } catch (error) {
+    return res.status(500).json({ status: "error", error });
+  }
+};
+// get all available carsModels according to search-------------
+const getAllCarModelAccordingSearchController = async (req, res) => {
+  const {searchText}= req.query;
+  try {
+    const carTypesData = await getAllCarModelAccordingSearchFromDB(searchText);
+    return res
+      .status(200)
+      .json({ status: "success", data: carTypesData, message:"carModel according to search successfully"});
+  } catch (error) {
+    return res.status(500).json({ status: "error", error });
   }
 };
 // get a single car data-------------
@@ -135,6 +163,8 @@ module.exports = {
   getAllAvailableCarsController,
   getSingleCarController,
   getTopCarsController,
+  getAllCarsTypesController,
+  getAllCarModelAccordingSearchController,
   addACarController,
   getAllCarsByAUserController,
   deleteACarController,

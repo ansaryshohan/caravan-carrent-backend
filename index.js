@@ -13,7 +13,7 @@ const port = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://carrental-caravan.web.app"],
     credentials: true,
   })
 );
@@ -35,7 +35,11 @@ app.post("/jwt", async (req, res) => {
     expiresIn: "5h",
   });
   //  set http only cookie
-  res.cookie("token", token, { httpOnly: true, secure: false });
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+  });
   //  send response
   res.json({ message: "Login successful" });
 });
@@ -44,14 +48,15 @@ app.post("/jwt", async (req, res) => {
 app.post("/remove-jwt", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false, // Set to `true` in production
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
   });
 
   res.json({ message: "Logout successful" });
 });
 
 // routes
-app.use("/caravan", userImgRouter);
+app.use("/caravan/images", userImgRouter);
 app.use("/caravan/cars", allCarsRouter);
 app.use("/caravan/car-booking", carBookingRouter);
 

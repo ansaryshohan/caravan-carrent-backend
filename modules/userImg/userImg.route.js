@@ -6,6 +6,7 @@ const router = express.Router();
 const {
   getUserImgController,
   createUserImgController,
+  createUserImgDataController
 } = require("./userImg.controller");
 
 const uploadFolder = path.join(__dirname, "../../public/images");
@@ -39,5 +40,7 @@ const upload = multer({
 
 router.get("/user-image", getUserImgController);
 router.post("/user-image", upload.single("photo"), createUserImgController);
+// working route------
+router.post("/add-image",createUserImgDataController);
 
 module.exports = router;

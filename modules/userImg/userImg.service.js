@@ -45,11 +45,41 @@ const createUserImgInDB = async (userImgData) => {
   }
 };
 
+const createUserImgDataInDB = async (userImgData) => {
+  try {
+    const findUser = await userImgModel.findOne({
+      userEmail: userImgData.userEmail,
+    });
+    // if user is not found in DB then create one
+    if (!findUser) {
+      const userImgObj = new userImgModel(userImgData);
+      const userImgObjSave = await userImgObj.save();
+      return userImgObjSave;
+    }
+    // if user is found the update the userImg of the database
+    const updateUserImg = await userImgModel.updateOne(
+      { userEmail: userImgData.userEmail },
+      { $set: { userImg: userImgData.userImg } }
+    );
+    // after updating in DB then delete the previous image from the public/image folder
+    if (updateUserImg.acknowledged) {
+     
+      // user image data after it is updated
+      const updatedUser = await userImgModel.findOne({
+        userEmail: userImgData.userEmail,
+      });
+      return updatedUser;
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getUserImgFromDB = async (userEmail) => {
   try {
     const userImgObj = await userImgModel.find({ userEmail });
 
-    console.log("form getUserImg service", userImgObj);
+    // console.log("form getUserImg service", userImgObj);
 
     return userImgObj;
   } catch (error) {
@@ -57,4 +87,4 @@ const getUserImgFromDB = async (userEmail) => {
   }
 };
 
-module.exports = { getUserImgFromDB, createUserImgInDB };
+module.exports = { getUserImgFromDB, createUserImgInDB,createUserImgDataInDB };
